@@ -105,12 +105,15 @@
       <input type="range" id="bottomCropSlider" min="0" max="1000" value="0" class="horizontal-slider" style="width: 100%;">
     </div>
     </div>
-    <div class="preview-area">
-      <div class="images-preview" id="imagesPreview">
-        <canvas id="previewCanvas"></canvas>
+    <div class="preview-area" style="width: 100%;">
+      <div class="images-preview" id="imagesPreview" style="width: 100%;">
+        <canvas id="previewCanvas" style="width: 100%;"></canvas>
       </div>
     </div>
-    <button id="exportBtn">Export</button>
+    <div style="display: flex; gap: 12px; justify-content: center; margin-bottom: 16px; width: 100%;">
+      <button id="exportBtn" style="flex: 1;">Export</button>
+      <button id="exportAndLoadBtn" style="flex: 1;">Export & Load as Top</button>
+    </div>
     <a id="downloadLink" style="display:none">Download</a>
   </div>  <script>
     const topImageInput = document.getElementById('topImageInput');
@@ -119,6 +122,7 @@
     const bottomCropSlider = document.getElementById('bottomCropSlider');
     const previewCanvas = document.getElementById('previewCanvas');
     const exportBtn = document.getElementById('exportBtn');
+    const exportAndLoadBtn = document.getElementById('exportAndLoadBtn');
     const downloadLink = document.getElementById('downloadLink');
 
     let topImage = null;
@@ -203,6 +207,19 @@
       downloadLink.style.display = 'inline';
       downloadLink.click();
       setTimeout(() => { downloadLink.style.display = 'none'; }, 1000);
+    });
+
+    exportAndLoadBtn.addEventListener('click', () => {
+      if (!topImage || !bottomImage) return;
+      // Export the current canvas as an image
+      const dataURL = previewCanvas.toDataURL('image/png');
+      // Load the exported image as the new top image
+      const img = new Image();
+      img.onload = function() {
+        topImage = img;
+        drawPreview();
+      };
+      img.src = dataURL;
     });
 
     drawPreview();
