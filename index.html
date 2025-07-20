@@ -113,6 +113,7 @@
     <div style="display: flex; gap: 12px; justify-content: center; margin-bottom: 16px; width: 100%;">
       <button id="exportBtn" style="flex: 1;">Export</button>
       <button id="exportAndLoadBtn" style="flex: 1;">Export & Load as Top</button>
+      <button id="toggleLinesBtn" style="flex: 1;">Hide Separator</button>
     </div>
     <a id="downloadLink" style="display:none">Download</a>
   </div>  <script>
@@ -124,6 +125,8 @@
     const exportBtn = document.getElementById('exportBtn');
     const exportAndLoadBtn = document.getElementById('exportAndLoadBtn');
     const downloadLink = document.getElementById('downloadLink');
+    const toggleLinesBtn = document.getElementById('toggleLinesBtn');
+    let showLines = true;
 
     let topImage = null;
     let bottomImage = null;
@@ -165,6 +168,12 @@
     topCropSlider.addEventListener('input', drawPreview);
     bottomCropSlider.addEventListener('input', drawPreview);
 
+    toggleLinesBtn.addEventListener('click', () => {
+      showLines = !showLines;
+      toggleLinesBtn.textContent = showLines ? 'Hide Lines' : 'Show Lines';
+      drawPreview();
+    });
+
     function drawPreview() {
       if (!topImage || !bottomImage) {
         previewCanvas.width = 400;
@@ -193,8 +202,32 @@
       ctx.clearRect(0, 0, previewCanvas.width, previewCanvas.height);
       // Draw top image (cropped from bottom)
       ctx.drawImage(topImage, 0, 0, topImage.width, topHeight, 0, 0, topImage.width, topHeight);
+      if (showLines) {
+        // Draw horizontal red line at the bottom of the top image (trimmed to top image width)
+        ctx.save();
+        ctx.strokeStyle = 'red';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(0, topHeight - 1);
+        ctx.globalAlpha = 0.5;
+        ctx.lineTo(topImage.width, topHeight - 1);
+        ctx.globalAlpha = 1.0;
+        ctx.stroke();
+        ctx.restore();
+      }
       // Draw bottom image (cropped from top)
       ctx.drawImage(bottomImage, 0, bottomImage.height - bottomHeight, bottomImage.width, bottomHeight, 0, topHeight, bottomImage.width, bottomHeight);
+      if (showLines) {
+        // Draw horizontal yellow line at the top of the bottom image (trimmed to bottom image width)
+        ctx.save();
+        ctx.strokeStyle = 'yellow';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(0, topHeight + 1);
+        ctx.lineTo(bottomImage.width, topHeight + 1);        ctx.globalAlpha = 1.0;
+        ctx.stroke();
+        ctx.restore();
+      }
       // The canvas will overflow the container if too tall, but aspect ratio is preserved
     }
 
