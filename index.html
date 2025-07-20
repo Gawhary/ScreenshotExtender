@@ -210,8 +210,18 @@
     });
 
     exportAndLoadBtn.addEventListener('click', () => {
-      // Trigger the Bottom Image file input as if the user pressed 'Browse'
-      bottomImageInput.click();
+        if (!topImage || !bottomImage) return;
+        // Export the current canvas as an image
+        const dataURL = previewCanvas.toDataURL('image/png');
+        // Load the exported image as the new top image
+        const img = new Image();
+        img.onload = function() {
+            topImage = img;
+            drawPreview();
+        };
+        img.src = dataURL;
+        // Trigger the Bottom Image file input as if the user pressed 'Browse'
+        bottomImageInput.click();
     });
 
     drawPreview();
