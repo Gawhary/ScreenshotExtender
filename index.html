@@ -70,21 +70,12 @@
     .sliders {
       display: flex;
       flex-direction: column;
-      gap: 24px;
+      /* gap: 24px; */
       align-items: center;
     }
-    .sliders label {
-      writing-mode: initial;
-      text-align: center;
-      font-size: 0.95em;
-      margin-bottom: 4px;
-    }
-    input[type=range][orient=vertical] {
-    writing-mode: vertical-lr;
+    input[type=range][orient=horizontal] {
     direction: rtl;
-    appearance: slider-vertical;
-    width: 16px;
-    vertical-align: bottom;
+    appearance: slider-horizontal;
     }
     button {
       display: block;
@@ -109,20 +100,19 @@
     <div class="inputs">
       <label>Top Image: <input type="file" id="topImageInput" accept="image/*"></label>
       <label>Bottom Image: <input type="file" id="bottomImageInput" accept="image/*"></label>
+    <div class="sliders" style="width: 100%;">
+      <input type="range" id="topCropSlider" min="0" max="1000" value="1000" class="horizontal-slider" style="width: 100%;">
+      <input type="range" id="bottomCropSlider" min="0" max="1000" value="0" class="horizontal-slider" style="width: 100%;">
+    </div>
     </div>
     <div class="preview-area">
       <div class="images-preview" id="imagesPreview">
         <canvas id="previewCanvas"></canvas>
       </div>
-      <div class="sliders">
-        <input type="range" id="topCropSlider" min="0" max="100" value="100" orient="vertical" class="vertical-slider">
-        <input type="range" id="bottomCropSlider" min="0" max="100" value="0" orient="vertical" class="vertical-slider">
-      </div>
     </div>
     <button id="exportBtn">Export</button>
     <a id="downloadLink" style="display:none">Download</a>
-  </div>
-  <script>
+  </div>  <script>
     const topImageInput = document.getElementById('topImageInput');
     const bottomImageInput = document.getElementById('bottomImageInput');
     const topCropSlider = document.getElementById('topCropSlider');
@@ -186,8 +176,8 @@
         return;
       }
       // Calculate crop values
-      const topCrop = topCropSlider.value / 100;
-      const bottomCrop = bottomCropSlider.value / 100;
+      const topCrop = topCropSlider.value / 1000;
+      const bottomCrop = bottomCropSlider.value / 1000;
       // Use the width of the widest image
       const width = Math.max(topImage.width, bottomImage.width);
       const topHeight = Math.round(topImage.height * topCrop);
